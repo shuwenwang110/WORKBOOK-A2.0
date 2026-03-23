@@ -1,0 +1,296 @@
+<head>
+<title>WEEK 3</title>
+<style>
+body {
+    margin: 0;
+    min-height: 100vh; 
+    background: black;
+    color: white;
+    font-family: Arial, sans-serif;
+    opacity: 0;
+    animation: fadeIn 0.7s ease forwards;
+    cursor: none;
+    padding: 8vw 0 4vw; 
+}
+@keyframes fadeIn {
+    to { opacity: 1; }
+}
+#starsCanvas {
+    position: fixed; 
+    top: 0;
+    left: 0;
+    z-index: 0;
+}
+/* 光标 */
+.cursor {
+  position: fixed;
+  width: 0.8vw; 
+  height: 0.8vw;
+  background: white;
+  border-radius: 50%;
+  pointer-events: none;
+  box-shadow: 0 0 0.8vw white, 0 0 1.2vw white;
+  z-index: 1000;
+}
+/* 拖尾*/
+.trail {
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+  background: white;
+  z-index: 999;
+}
+/* 布局 */
+.container {
+    position: relative;
+    z-index: 2;
+    width: 84vw; 
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 3vw; 
+}
+.item {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.item img {
+    width: 90%; 
+    transform: scale(0.85);
+    aspect-ratio: 1 / 1; 
+    object-fit: cover;
+    cursor: none;
+    border-radius: 0.6vw; 
+    transition: transform 0.3s ease;
+}
+/* 图片悬浮放大 */
+.item img:hover {
+    transform: scale(0.9);
+}
+/* 发光文字*/
+.caption {
+    margin-top: 0.8vw;
+    font-size: 0.9vw; 
+    line-height: 1.6;
+    color: #eaeaea;
+    text-shadow:
+        0 0 0.3vw rgba(255,255,255,0.9),
+        0 0 0.6vw rgba(255,255,255,0.7),
+        0 0 1.2vw rgba(255,255,255,0.5),
+        0 0 2vw rgba(255,255,255,0.3),
+        0 0 3vw rgba(255,255,255,0.15);
+}
+/* 图片放大层 */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(1.2vw);
+    background: rgba(0,0,0,0.6);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 99999;
+}
+.overlay img {
+    width: 50vw; 
+    border-radius: 0.8vw;
+}
+/* HOME 按钮*/
+.home-btn {
+    position: fixed; 
+    top: 3vw;
+    left: 3vw;
+    width: 2.8vw;
+    height: 2.8vw;
+    border-radius: 50%;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4vw; 
+    font-weight: bold;
+    color: black;
+    cursor: none;
+    box-shadow:
+        0 0 0.7vw white, 
+        0 0 1.4vw rgba(255,255,255,0.7),
+        0 0 2.8vw rgba(255,255,255,0.4);
+    z-index: 500;
+    transition: transform 0.3s ease;
+    
+    user-select: none;
+    -webkit-user-select: none;
+}
+.home-btn:hover {
+    transform: scale(1.1);
+}
+/* 响应式适配*/
+@media screen and (max-width: 1024px) {
+    .container {
+        gap: 2vw;
+        width: 90vw;
+    }
+    .caption {
+        font-size: 1.2vw;
+    }
+}
+</style>
+</head>
+<body>
+
+<canvas id="starsCanvas"></canvas>
+
+<div class="home-btn" onclick="goHome()">H</div>
+
+<div class="container">
+    <div class="item">
+        <img src="mouse.gif" onclick="openImg(this.src)">
+        <div class="caption">Mouse<br><br>My website requires a cool mouse pointer cursor. I plan to add a trailing effect to the mouse. The inspiration for the cursor came from the HTML CHEATSHEET on teacher's website - Easing.</div>
+    </div>
+    <div class="item">
+        <img src="star.gif" onclick="openImg(this.src)">
+        <div class="caption">Star<br><br>Creating a starry background is quite simple, but I want it to move, like a real 3D environment. I thought of Parallax Scrolling. This effect I have seen in many games, such as "Don't Starve".</div>
+    </div>
+    <div class="item">
+        <img src="frame.gif" onclick="openImg(this.src)">
+        <div class="caption">Frame<br><br>A very "active" button can encourage users to engage more actively. The principle is: 1. Set the movement direction, 2. Return to the original position.</div>
+    </div>
+    <div class="item">
+        <img src="Button.gif" onclick="openImg(this.src)">
+        <div class="caption">Button<br><br>I attempted to create effective jump buttons. I tried adding images, animations, and videos, but the insertion of 3D models seemed to be much easier...</div>
+    </div>
+    <div class="item">
+        <img src="HELLO-WORLD.gif" onclick="openImg(this.src)">
+        <div class="caption">HELLO-WORLD<br><br>I combined the previous elements and re-created "HELLO WORLD" - with a starry background, hover effect, and an effective jump button.</div>
+    </div>
+    <div class="item">
+        <img src="AIWEB.gif" onclick="openImg(this.src)">
+        <div class="caption">AIWEB<br><br>We used AI on Stitch to create some beautifully designed website interfaces. Although I don't recommend using AI, I must admit that the work done by AI looks very well done.</div>
+    </div>
+</div>
+
+<div class="overlay" id="overlay" onclick="closeImg()">
+    <img id="bigImg">
+</div>
+
+<div class="cursor" id="cursor"></div>
+
+<script>
+/* 星空 */
+const canvas = document.getElementById("starsCanvas");
+const ctx = canvas.getContext("2d");
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+let mouseX = window.innerWidth / 2;
+let mouseY = window.innerHeight / 2;
+let targetX = mouseX;
+let targetY = mouseY;
+document.addEventListener("mousemove", e => {
+  targetX = e.clientX;
+  targetY = e.clientY;
+});
+function smoothFollow() {
+  mouseX += (targetX - mouseX) * 0.08;
+  mouseY += (targetY - mouseY) * 0.08;
+}
+
+const layers = [
+  { stars: [], speed: 0.02, count: 80 },
+  { stars: [], speed: 0.05, count: 60 },
+  { stars: [], speed: 0.08, count: 40 }
+];
+
+layers.forEach(layer => {
+  for (let i = 0; i < layer.count; i++) {
+    layer.stars.push({
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight,
+      size: Math.random() * 1.2 + 0.3,
+      twinkleOffset: Math.random() * Math.PI * 2
+    });
+  }
+});
+
+function drawStars() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  smoothFollow();
+  layers.forEach(layer => {
+    layer.stars.forEach(star => {
+      let offsetX = (mouseX - window.innerWidth / 2) * layer.speed;
+      let offsetY = (mouseY - window.innerHeight / 2) * layer.speed;
+      let twinkle = 0.5 + 0.5 * Math.sin(Date.now() * 0.001 + star.twinkleOffset);
+      ctx.beginPath();
+      ctx.arc(star.x + offsetX, star.y + offsetY, star.size, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255,255,255,${0.5 + twinkle * 0.5})`;
+      ctx.fill();
+    });
+  });
+  requestAnimationFrame(drawStars);
+}
+drawStars();
+
+window.addEventListener("resize", resizeCanvas);
+
+
+function openImg(src) {
+    document.getElementById("overlay").style.display = "flex";
+    document.getElementById("bigImg").src = src;
+}
+function closeImg() {
+    document.getElementById("overlay").style.display = "none";
+}
+
+/* HOME按钮 */
+function goHome() {
+    window.location.href = "index.html";
+}
+
+
+const cursor = document.getElementById("cursor");
+let trails = [];
+const trailCount = 10;
+// 生成拖尾元素
+for (let i = 0; i < trailCount; i++) {
+  let t = document.createElement("div");
+  t.className = "trail";
+  document.body.appendChild(t);
+  trails.push({ el: t, x: 0, y: 0 });
+}
+
+document.addEventListener("mousemove", e => {
+  cursor.style.left = e.clientX - cursor.offsetWidth/2 + "px";
+  cursor.style.top = e.clientY - cursor.offsetHeight/2 + "px";
+  trails[0].x = e.clientX;
+  trails[0].y = e.clientY;
+});
+
+function animateCursor() {
+  for (let i = trails.length - 1; i > 0; i--) {
+    trails[i].x += (trails[i-1].x - trails[i].x) * 0.5;
+    trails[i].y += (trails[i-1].y - trails[i].y) * 0.5;
+  }
+  trails.forEach((t, i) => {
+    let scale = 1 - i / trailCount;
+    let opacity = 1 - i / trailCount;
+    t.el.style.width = (0.8 * scale) + "vw"; 
+    t.el.style.height = (0.8 * scale) + "vw";
+    t.el.style.opacity = opacity;
+    t.el.style.left = t.x - (t.el.offsetWidth/2) + "px";
+    t.el.style.top = t.y - (t.el.offsetHeight/2) + "px";
+  });
+  requestAnimationFrame(animateCursor);
+}
+animateCursor();
+</script>
+</body>
+</html>
